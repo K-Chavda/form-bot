@@ -30,6 +30,7 @@ import {
   deleteIcon,
   flagIcon,
   messageIcon,
+  checkBlueIcon,
 } from "../../assets/icons";
 
 const FormBuilderPage = () => {
@@ -51,6 +52,7 @@ const FormBuilderPage = () => {
   );
   const [isShared, setIsShared] = useState(false);
   const [isSaved, setIsSaved] = useState(!!formName || false);
+  const [saveButtonText, setSaveButtonText] = useState("Save");
   const [isLoading, setIsLoading] = useState(true);
   const [formFields, setFormFields] = useState([
     {
@@ -106,6 +108,7 @@ const FormBuilderPage = () => {
   };
 
   const handleSaveButtonClick = async () => {
+    setSaveButtonText("Saving...");
     let hasError = false;
 
     // Validate form name
@@ -140,6 +143,7 @@ const FormBuilderPage = () => {
 
         if (!formId) {
           localStorage.setItem("formId", response.data?._id);
+          localStorage.setItem("formName", response.data?.name);
           setFormId(response.data?._id);
         }
 
@@ -173,6 +177,7 @@ const FormBuilderPage = () => {
 
         updateFormDetails();
         setIsSaved(true);
+        setSaveButtonText("Save");
       } catch (error) {
         showToast({
           message: "Failed to save form details.",
@@ -356,7 +361,7 @@ const FormBuilderPage = () => {
                 className={`${styles.headerButton} ${styles.bgGreen}`}
                 onClick={handleSaveButtonClick}
               >
-                Save
+                {saveButtonText}
               </button>
               <img
                 src={closeIcon}
@@ -386,6 +391,20 @@ const FormBuilderPage = () => {
             isLoading,
           }}
         />
+        <div
+          className={
+            isShared
+              ? `${styles.shareLinkMessage} ${styles.shareLinkMessageOpacity}`
+              : styles.shareLinkMessage
+          }
+        >
+          <img
+            src={checkBlueIcon}
+            alt="form-bot"
+            className={styles.shareLinkCopySuccessIcon}
+          />
+          <span className={styles.shareLinkCopySuccessText}>Link copied</span>
+        </div>
       </div>
     </>
   );
